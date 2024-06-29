@@ -2,6 +2,6 @@
 exclude = tests/test_data
 extend-ignore = W503, E203
 enable = W504
-max-line-length = 79
+max-line-length = 99
 max-complexity = 8
 select = "B,C,E,F,W,T4,B9"

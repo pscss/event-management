@@ -1,73 +1,88 @@
+import asyncio
 from logging import getLogger
 from logging.config import fileConfig
 
-from sqlalchemy import create_engine
-from sqlalchemy_utils import create_database, database_exists
+from sqlalchemy import pool
+from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
+from sqlalchemy_utils import database_exists
 
 from alembic import context
 from event_manager import models
 from event_manager.core.config import settings
 
 logger = getLogger(__name__)
-# this is the Alembic Config object, which provides
-# access to the values within the .ini file in use.
+
 config = context.config
 
-# Interpret the config file for Python logging.
-# This line sets up loggers basically.
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
-
 
 target_metadata = models.Base.metadata
 
 
-def run_migrations_offline(url) -> None:
-    """Run migrations in 'offline' mode.
+async def check_database_exists(connectable: AsyncEngine):
+    """Check if the database exists."""
+    try:
+        print("Checking if database exists...")
+        async with connectable.connect() as connection:
+            exists = await connection.run_sync(
+                lambda conn: database_exists(conn.engine.url)
+            )
+            print(f"Database exists: {exists}")
+            return exists
+    except Exception as e:
+        print(f"Error checking database existence: {e}")
+        return False
 
-    This configures the context with just a URL
-    and not an Engine, though an Engine is acceptable
-    here as well.  By skipping the Engine creation
-    we don't even need a DBAPI to be available.
 
-    Calls to context.execute() here emit the given string to the
-    script output.
-
-    """
-
+def run_migrations_offline() -> None:
+    """Run migrations in 'offline' mode."""
+    print("Running migrations in offline mode...")
     context.configure(
-        url=url,
+        url=settings.SQLALCHEMY_DATABASE_URI,
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
     )
 
     with context.begin_transaction():
+        print("Starting offline migration transaction...")
         context.run_migrations()
+        print("Offline migrations completed successfully.")
 
 
-def run_migrations_online(engine) -> None:
-    """Run migrations in 'online' mode.
+async def run_migrations_online() -> None:
+    """Run migrations in 'online' mode."""
+    print("Running migrations in online mode...")
+    print(f"Database URI: {settings.SQLALCHEMY_DATABASE_URI}")
+    connectable = create_async_engine(
+        settings.SQLALCHEMY_DATABASE_URI, poolclass=pool.NullPool
+    )
 
-    In this scenario we need to create an Engine
-    and associate a connection with the context.
+    if not await check_database_exists(connectable):
+        print("Database does not exist. Exiting migration.")
+        return
+    try:
+        async with connectable.connect() as connection:
+            print("Connected to the database.")
+            await connection.run_sync(
+                lambda conn: context.configure(
+                    connection=conn, target_metadata=target_metadata
+                )
+            )
+            print("Configuration completed. Starting migrations...")
+            await connection.run_sync(lambda _: context.run_migrations())
+            await connection.commit()
+            print("Online migrations completed successfully.")
+    except Exception as e:
+        print(f"Error during migration: {e}")
+        await connection.rollback()
 
-    """
-
-    if not database_exists(engine.url):
-        logger.info(f"Creating new database '{engine.url.database}'")
-        create_database(engine.url)
-
-    with engine.connect() as connection:
-        context.configure(connection=connection, target_metadata=target_metadata)
-
-        with context.begin_transaction():
-            context.run_migrations()
+    await connectable.dispose()
+    print("Database connection disposed.")
 
 
-url = settings.SQLALCHEMY_DATABASE_URI
-engine = create_engine(url)  # type:ignore
 if context.is_offline_mode():
-    run_migrations_offline(engine.url)
+    run_migrations_offline()
 else:
-    run_migrations_online(engine)
+    asyncio.run(run_migrations_online())
