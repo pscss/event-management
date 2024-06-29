@@ -34,8 +34,6 @@ The Event Management API is a backend service designed to manage events, handle 
    cd event-management
    ```
 
-````
-
 2. **Install Dependencies**:
 
    ```bash
@@ -104,4 +102,7 @@ This command will execute all unit and integration tests defined in the project.
 ## Conclusion
 
 The Event Management API is a comprehensive solution for managing events, bookings, and payments. By following the setup instructions, you can run the application locally or in a Docker container.
-````
+
+```
+
+```
