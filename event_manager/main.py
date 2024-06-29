@@ -3,10 +3,11 @@ from fastapi.responses import RedirectResponse
 from pydantic import ValidationError
 
 from event_manager.api.routes import api_router
+from event_manager.core.config import settings
 
 app = FastAPI(
-    title="Event Management API",
-    description="API for managing events, bookings, and payments",
+    title=settings.POSTGRES_APPLICATION_NAME,
+    description="Manager for managing events, bookings, and payments",
     version="1.0.0",
     openapi_url="/openapi.json",
     docs_url="/docs",

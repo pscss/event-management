@@ -39,7 +39,7 @@ def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode."""
     print("Running migrations in offline mode...")
     context.configure(
-        url=settings.SQLALCHEMY_DATABASE_URI,
+        url=settings.DATABASE_URL,
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
@@ -54,10 +54,8 @@ def run_migrations_offline() -> None:
 async def run_migrations_online() -> None:
     """Run migrations in 'online' mode."""
     print("Running migrations in online mode...")
-    print(f"Database URI: {settings.SQLALCHEMY_DATABASE_URI}")
-    connectable = create_async_engine(
-        settings.SQLALCHEMY_DATABASE_URI, poolclass=pool.NullPool
-    )
+    print(f"Database URI: {settings.DATABASE_URL}")
+    connectable = create_async_engine(settings.DATABASE_URL, poolclass=pool.NullPool)
 
     if not await check_database_exists(connectable):
         print("Database does not exist. Exiting migration.")

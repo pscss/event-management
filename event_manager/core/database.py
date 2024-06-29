@@ -37,7 +37,7 @@ def create_engine(dsn: str, poolclass: Type[Pool] | None = None) -> AsyncEngine:
 
 
 def get_engine() -> AsyncEngine:
-    return create_engine(settings.SQLALCHEMY_DATABASE_URI)
+    return create_engine(settings.DATABASE_URL)
 
 
 def create_sessionmaker(engine: AsyncEngine) -> sessionmaker:
