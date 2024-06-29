@@ -22,7 +22,6 @@ class PaymentManager(CRUD[Payment, PaymentCreate, PaymentUpdate]):
                 transaction_id=uuid.uuid4(),
                 amount=booking.total_cost
             )
-            print("PAYMENT", payment.__dict__)
             db.add(payment)
             await db.commit()
             await db.refresh(payment)

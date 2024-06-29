@@ -1,9 +1,11 @@
 from typing import List, Optional
 
+import googlemaps
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.sql import and_, or_
 
+from event_manager.core.config import settings
 from event_manager.dal.crud_manager import CRUD
 from event_manager.models.event import Event
 from event_manager.schemas.event import EventCreate, EventUpdate
@@ -46,6 +48,26 @@ class EventManager(CRUD[Event, EventCreate, EventUpdate]):
         query = query.offset(skip).limit(limit).order_by(Event.name)
         result = await db.execute(query)
         return result.scalars().all()
+
+    async def get_event_location_map(self, event_id: int, db: AsyncSession):
+        event = await event_manager.get(db, event_id)
+        if not event:
+            raise ValueError("Event not found")
+
+        gmaps = googlemaps.Client(key=settings.GOOGLE_MAPS_API_KEY)
+        geocode_result = gmaps.geocode(event.venue)
+        if geocode_result:
+            location = geocode_result[0]["geometry"]["location"]
+            lat = location["lat"]
+            lng = location["lng"]
+        else:
+            lat = event.location_lat
+            lng = event.location_long
+
+        # Construct the Google Maps URL
+        map_url = f"https://www.google.com/maps/search/?api=1&query={lat},{lng}"
+
+        return map_url
 
 
 event_manager = EventManager(Event)

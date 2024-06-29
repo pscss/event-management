@@ -91,3 +91,13 @@ async def search_events(
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/events/{event_id}/map", response_model=str)
+async def get_event_map(event_id: int, db: AsyncSession = Depends(with_session)):
+    try:
+        return await event_manager.get_event_location_map(event_id, db)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
