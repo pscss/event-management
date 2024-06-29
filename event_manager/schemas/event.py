@@ -1,7 +1,7 @@
 from datetime import date, time
 from typing import Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 from typing_extensions import Annotated
 
 
@@ -46,5 +46,4 @@ class EventUpdate(EventBase):
 class Event(EventBase):
     id: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

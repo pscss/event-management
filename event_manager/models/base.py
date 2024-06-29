@@ -1,8 +1,8 @@
 import re
 
 from sqlalchemy import Column
-from sqlalchemy.ext.declarative import as_declarative, declared_attr
-from sqlalchemy.orm import Mapped
+from sqlalchemy.ext.declarative import declared_attr
+from sqlalchemy.orm import Mapped, as_declarative
 from sqlalchemy.sql.sqltypes import Integer
 
 

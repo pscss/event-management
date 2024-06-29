@@ -1,3 +1,4 @@
+from pydantic import ConfigDict
 from pydantic_settings import BaseSettings
 
 
@@ -11,9 +12,7 @@ class Settings(BaseSettings):
     POSTGRES_POOL_MAX_OVERFLOW: int = 20
     GOOGLE_MAPS_API_KEY: str
 
-    class Config:
-        case_sensitive = True
-        env_file = ".env"
+    model_config = ConfigDict(case_sensitive=True, env_file=".env")
 
 
 settings = Settings()

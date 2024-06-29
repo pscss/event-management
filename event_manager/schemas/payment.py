@@ -1,7 +1,7 @@
 from datetime import datetime
 from uuid import UUID
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from event_manager.models.payment import PaymentStatus
 
@@ -25,5 +25,4 @@ class Payment(PaymentBase):
     transaction_id: UUID
     amount: float
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
