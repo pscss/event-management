@@ -84,7 +84,7 @@ The Event Management API is a backend service designed to manage events, handle 
 5. **Start the Application**:
 
    ```bash
-   uvicorn event_manager.main:app --port 8080 --reload
+   python3 run.py
    ```
 
 6. **Access the API**:
