@@ -17,6 +17,10 @@ The Event Management API is a backend service designed to manage events, handle 
 
 ## Docker Setup
 
+### Prerequisites
+
+- Docker
+
 ### Build and Run Containers
 
 1. **Build the Docker Images**:
@@ -44,8 +48,7 @@ The Event Management API is a backend service designed to manage events, handle 
 ### Prerequisites
 
 - Python 3.10+
-- PostgreSQL
-- Docker
+- PostgreSQL16
 - Poetry (for dependency management)
 
 ### Installation
