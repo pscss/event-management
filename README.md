@@ -1,4 +1,4 @@
-# Event Management API
+# Event Management
 
 ## Overview
 
