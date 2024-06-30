@@ -13,57 +13,7 @@ The Event Management API is a backend service designed to manage events, handle 
 
 ## Integrated Third-Party APIs
 
-- **Stripe**: Used for payment processing, allowing users to securely pay for event tickets.
 - **Google Maps API**: Used to display event locations on a map, providing users with visual location data.
-
-## Setup and Local Execution
-
-### Prerequisites
-
-- Python 3.10+
-- PostgreSQL
-- Docker
-- Poetry (for dependency management)
-
-### Installation
-
-1. **Clone the Repository**:
-
-   ```bash
-   git clone https://github.com/Aryank47/event-management
-   cd event-management
-   ```
-
-2. **Install Dependencies**:
-
-   ```bash
-   poetry install
-   ```
-
-3. **Environment Setup**:
-
-   override if necessary the `.env` file in the project root with the following content:
-
-   ```env
-   DATABASE_URL=postgresql+asyncpg://postgres:postgres@localhost:5432/postgres
-   GOOGLE_MAPS_API_KEY=<your_google_maps_api_key>
-   ```
-
-4. **Run Database Migrations**:
-
-   ```bash
-   poetry run alembic upgrade head
-   ```
-
-5. **Start the Application**:
-
-   ```bash
-   uvicorn event_manager.main:app --port 8001 --reload
-   ```
-
-6. **Access the API**:
-
-   Open your browser and navigate to `http://localhost:8001/docs` for the Swagger UI.
 
 ## Docker Setup
 
@@ -89,6 +39,55 @@ The Event Management API is a backend service designed to manage events, handle 
 
 - Open your browser and navigate to `http://localhost:8001/docs` to access the Swagger UI.
 
+## Local Setup and Execution
+
+### Prerequisites
+
+- Python 3.10+
+- PostgreSQL
+- Docker
+- Poetry (for dependency management)
+
+### Installation
+
+1. **Clone the Repository**:
+
+   ```bash
+   git clone https://github.com/Aryank47/event-management
+   cd event-management
+   ```
+
+2. **Install Dependencies**:
+
+   ```bash
+   poetry install
+   ```
+
+3. **Environment Setup**:
+
+   override the `.env` file, if necessary in the project root with the following content:
+
+   ```env
+   DATABASE_URL=postgresql+asyncpg://<user>:<password>@localhost:<5432>/<db>
+   GOOGLE_MAPS_API_KEY=<your_google_maps_api_key>
+   ```
+
+4. **Run Database Migrations**:
+
+   ```bash
+   poetry run alembic upgrade head
+   ```
+
+5. **Start the Application**:
+
+   ```bash
+   uvicorn event_manager.main:app --port 8080 --reload
+   ```
+
+6. **Access the API**:
+
+   Open your browser and navigate to `http://localhost:8080/docs` for the Swagger UI.
+
 ## Running Tests(WORK IN PROGRESS...will not work till then)
 
 To run tests, use the following command:
@@ -102,7 +101,3 @@ This command will execute all unit and integration tests defined in the project.
 ## Conclusion
 
 The Event Management API is a comprehensive solution for managing events, bookings, and payments. By following the setup instructions, you can run the application locally or in a Docker container.
-
-```
-
-```
