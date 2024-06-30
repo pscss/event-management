@@ -11,8 +11,6 @@ from event_manager.core.config import settings
 
 def get_server_settings() -> dict[str, str] | None:
     server_settings: dict[str, str] = {}
-    if settings.POSTGRES_DISABLE_JIT:
-        server_settings["jit"] = "off"
     if settings.POSTGRES_APPLICATION_NAME:
         server_settings["application_name"] = settings.POSTGRES_APPLICATION_NAME
     return server_settings or None
