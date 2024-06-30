@@ -19,11 +19,8 @@ class BookingCreate(BaseModel):
     quantity: int
 
 
-class BookingUpdate(BookingBase):
-    event_id: Optional[int] = None
-    user_id: Optional[int] = None
-    booking_time: Optional[datetime] = None
-    quantity: Optional[int] = None
+class BookingUpdate(BaseModel):
+    pass
 
 
 class Booking(BookingBase):

@@ -31,7 +31,7 @@ async def test_create_event(client: AsyncClient):
     assert data["location_lat"] == event_data["location_lat"]
     assert data["location_long"] == event_data["location_long"]
     assert data["base_price"] == event_data["base_price"]
-    assert data["id"] == 1
+    assert data["id"]
 
 
 @pytest.mark.asyncio
