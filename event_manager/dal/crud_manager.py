@@ -30,7 +30,7 @@ class CRUD(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         self, db: AsyncSession, db_obj: ModelType, obj_in: UpdateSchemaType
     ) -> ModelType:
         obj_data = jsonable_encoder(db_obj)
-        update_data = obj_in.dict(exclude_unset=True)
+        update_data = obj_in.model_dump(exclude_unset=True)
         for field in obj_data:
             if field in update_data:
                 setattr(db_obj, field, update_data[field])

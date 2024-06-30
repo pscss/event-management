@@ -91,7 +91,7 @@ The Event Management API is a backend service designed to manage events, handle 
 
    Open your browser and navigate to `http://localhost:8080/docs` for the Swagger UI.
 
-## Running Tests(WORK IN PROGRESS...will not work till then)
+## Running Tests
 
 To run tests, use the following command:
 

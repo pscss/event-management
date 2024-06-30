@@ -15,18 +15,6 @@ class EventBase(BaseModel):
     available_tickets: int
     base_price: Annotated[float, Field(strict=True, gt=0)]
 
-    def to_db_format(self):
-        return {
-            "name": self.name,
-            "event_date": self.event_date,
-            "event_time": self.event_time.time(),  # Convert to time
-            "venue": self.venue,
-            "location_lat": self.location_lat,
-            "location_long": self.location_long,
-            "available_tickets": self.available_tickets,
-            "base_price": self.base_price,
-        }
-
 
 class EventCreate(EventBase):
     pass
