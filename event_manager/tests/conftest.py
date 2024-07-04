@@ -9,13 +9,10 @@ from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engin
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy_utils import create_database, database_exists, drop_database
 
+from event_manager.core.config import settings
 from event_manager.core.database import create_sessionmaker, with_session
 from event_manager.main import app
 from event_manager.models import Base
-
-DATABASE_URL = "postgresql+asyncpg://postgres:postgres@localhost:5432/test_db"
-
-SYNC_DATABASE_URL = "postgresql://postgres:postgres@localhost:5432/test_db"
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -30,7 +27,9 @@ def create_test_database():
     """Creates the test database and tables using a synchronous connection."""
 
     # Create a synchronous engine using the same URL as your async engine
-    sync_engine = create_engine(SYNC_DATABASE_URL)
+    print("Creating SYNC ENGINE for db creation...")
+    sync_engine = create_engine(settings.TEST_SYNC_DATABASE_URL)
+    print("Completed Creating SYNC ENGINE for db creation...")
 
     if not database_exists(sync_engine.url):
         print("Creating test database...")
@@ -43,7 +42,9 @@ def create_test_database():
 
 def drop_test_database():
     # Create a synchronous engine using the same URL as your async engine
-    sync_engine = create_engine(SYNC_DATABASE_URL)
+    print("Creating SYNC ENGINE for db deletion...")
+    sync_engine = create_engine(settings.TEST_SYNC_DATABASE_URL)
+    print("Completed Creating SYNC ENGINE for db deletion...")
 
     if database_exists(sync_engine.url):
         print("Dropping test database...")
@@ -57,7 +58,7 @@ async def engine() -> AsyncGenerator[AsyncEngine, None]:
     create_test_database()
 
     engine = create_async_engine(
-        DATABASE_URL,
+        settings.TEST_DATABASE_URL,
         # echo=True,  # For detailed logging of all SQL calls (turn off in production)
         connect_args={"timeout": 50},  # Timeout for trying to connect to the database
         future=True,
