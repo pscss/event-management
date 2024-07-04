@@ -14,6 +14,8 @@ class EventBase(BaseModel):
     location_long: Annotated[float, Field(strict=True, gt=-180, lt=180)]
     available_tickets: int
     base_price: Annotated[float, Field(strict=True, gt=0)]
+    surge_price: float | None = 0
+    surge_threshold: float | None = 0
 
 
 class EventCreate(EventBase):
@@ -29,6 +31,8 @@ class EventUpdate(EventBase):
     location_long: Optional[float] = None
     available_tickets: Optional[int] = None
     base_price: Optional[float] = None
+    surge_price: Optional[float] = None
+    surge_threshold: Optional[float] = None
 
 
 class Event(EventBase):

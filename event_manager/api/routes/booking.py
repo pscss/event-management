@@ -5,6 +5,7 @@ from event_manager.core.database import with_session
 from event_manager.dal.booking import booking_manager
 from event_manager.dal.event import event_manager
 from event_manager.dal.user import user_manager
+from event_manager.errors.all_errors import InsufficientTickets
 from event_manager.schemas.booking import Booking, BookingCreate
 
 router = APIRouter()
@@ -22,6 +23,8 @@ async def create_booking(
         if not user:
             raise RuntimeError(f"User with id: {booking_in.user_id} not found")
         return await booking_manager.create_booking(db, booking_in, event)
+    except InsufficientTickets as e:
+        raise HTTPException(status_code=e.code, detail=e.message)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

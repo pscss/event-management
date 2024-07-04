@@ -30,5 +30,7 @@ class Event(Base):
     location_long = Column(Float, nullable=False)
     available_tickets = Column(Integer, nullable=False)
     base_price = Column(Float, nullable=False)
+    surge_price = Column(Float, nullable=False, default=0)
+    surge_threshold = Column(Float, nullable=False, default=0)
 
     bookings = relationship("Booking", back_populates="event")
