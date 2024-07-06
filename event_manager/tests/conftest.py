@@ -12,6 +12,7 @@ from sqlalchemy_utils import create_database, database_exists, drop_database
 
 from event_manager.core.config import settings
 from event_manager.core.database import create_sessionmaker, with_session
+from event_manager.keycloak.utils import validate_and_parse_token
 from event_manager.main import app
 from event_manager.models import Base
 
@@ -92,4 +93,7 @@ async def client(session: AsyncSession):
 
     async with AsyncClient(app=app, base_url="http://127.0.0.1:8080") as client:
         app.dependency_overrides[with_session] = session_override
+        app.dependency_overrides[validate_and_parse_token] = lambda: {
+            "realm_access": {"roles": ["admin"]},
+        }
         yield client

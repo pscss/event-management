@@ -1,15 +1,13 @@
 from logging import getLogger
-from typing import Annotated, Optional
+from typing import Annotated
 
 import jwt
-from fastapi import Depends, WebSocket
+from fastapi import Depends
 from fastapi.security import OAuth2AuthorizationCodeBearer
 from jwt import PyJWKClient
-from starlette.requests import Request
 
 from event_manager.core.config import settings
 from event_manager.keycloak.exceptions import (
-    MissingTokenException,
     TokenDecodingException,
     TokenExpiredException,
     TokenReadException,
@@ -27,31 +25,10 @@ oauth_2_scheme = OAuth2AuthorizationCodeBearer(
 )
 
 
-async def get_auth_token(request: Request = None, websocket: WebSocket = None) -> str:
-    """
-    Get the Auth token from the request, raises HTTPException if no auth token is present
-    """
-
-    headers_source = request or websocket
-    assert headers_source
-    authorization: Optional[str] = headers_source.headers.get("Authorization")
-    if not authorization:
-        raise MissingTokenException
-
-    try:
-        prefix, token = authorization.strip().split(" ", 1)
-    except Exception:
-        raise TokenDecodingException
-
-    if prefix != "Bearer":
-        raise MissingTokenException
-
-    return token
-
-
 async def validate_and_parse_token(
     access_token: Annotated[str, Depends(oauth_2_scheme)]
 ):
+    logger.debug(f"ACCESS TOKEN!!! {access_token}")
     jwks_client = PyJWKClient(JWKS_URI)
     try:
         signing_key = jwks_client.get_signing_key_from_jwt(access_token)
