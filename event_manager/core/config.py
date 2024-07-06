@@ -12,6 +12,13 @@ class Settings(BaseSettings):
     GOOGLE_MAPS_API_KEY: str
     TEST_DATABASE_URL: str
     TEST_SYNC_DATABASE_URL: str
+    KEYCLOAK_VERSION: str
+    KEYCLOAK_ADMIN: str
+    KEYCLOAK_ADMIN_PASSWORD: str
+    KEYCLOAK_URL: str
+    KEYCLOAK_REALM: str
+    KEYCLOAK_CLIENT_ID: str
+    KEYCLOAK_CLIENT_SECRET: str
 
     model_config = ConfigDict(case_sensitive=True, env_file=".env")
 

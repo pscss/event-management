@@ -1,4 +1,5 @@
 import asyncio
+import logging
 from typing import AsyncGenerator
 
 import pytest
@@ -14,6 +15,8 @@ from event_manager.core.database import create_sessionmaker, with_session
 from event_manager.main import app
 from event_manager.models import Base
 
+logger = logging.getLogger(__name__)
+
 
 @pytest.fixture(scope="session", autouse=True)
 def event_loop(request):
@@ -27,14 +30,14 @@ def create_test_database():
     """Creates the test database and tables using a synchronous connection."""
 
     # Create a synchronous engine using the same URL as your async engine
-    print("Creating SYNC ENGINE for db creation...")
+    logger.info("Creating SYNC ENGINE for db creation...")
     sync_engine = create_engine(settings.TEST_SYNC_DATABASE_URL)
-    print("Completed Creating SYNC ENGINE for db creation...")
+    logger.info("Completed Creating SYNC ENGINE for db creation...")
 
     if not database_exists(sync_engine.url):
-        print("Creating test database...")
+        logger.info("Creating test database...")
         create_database(sync_engine.url)
-        print("Test database created successfully.")
+        logger.info("Test database created successfully.")
 
         # Create tables using the synchronous engine
         Base.metadata.create_all(sync_engine)
@@ -42,14 +45,14 @@ def create_test_database():
 
 def drop_test_database():
     # Create a synchronous engine using the same URL as your async engine
-    print("Creating SYNC ENGINE for db deletion...")
+    logger.info("Creating SYNC ENGINE for db deletion...")
     sync_engine = create_engine(settings.TEST_SYNC_DATABASE_URL)
-    print("Completed Creating SYNC ENGINE for db deletion...")
+    logger.info("Completed Creating SYNC ENGINE for db deletion...")
 
     if database_exists(sync_engine.url):
-        print("Dropping test database...")
+        logger.info("Dropping test database...")
         drop_database(sync_engine.url)
-        print("Test database dropped successfully.")
+        logger.info("Test database dropped successfully.")
 
 
 @pytest.fixture(scope="session", autouse=True)
