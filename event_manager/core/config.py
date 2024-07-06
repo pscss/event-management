@@ -18,7 +18,6 @@ class Settings(BaseSettings):
     KEYCLOAK_URL: str
     KEYCLOAK_REALM: str
     KEYCLOAK_CLIENT_ID: str
-    KEYCLOAK_CLIENT_SECRET: str
 
     model_config = ConfigDict(case_sensitive=True, env_file=".env")
 
