@@ -8,9 +8,6 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./init-keycloak-db.sql:/docker-entrypoint-initdb.d/init-keycloak-db.sh
-    # entrypoint: /docker-entrypoint-initdb.d/init-keycloak-db.sh
-    # entrypoint: ["./init-keycloak-db.sh", "postgres"]
-    command: ["-c", "shared_buffers=256MB"]
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
@@ -24,20 +21,15 @@ services:
       - "8443:8443"
     entrypoint: /opt/keycloak/bin/kc.sh start-dev
     environment:
-      - DB_VENDOR=postgres
-      - DB_ADDR=db
-      - DB_DATABASE=keycloak
-      - DB_USER=keycloak
-      - DB_PASSWORD=keycloak
-      - KEYCLOAK_USER=admin
-      - KEYCLOAK_PASSWORD=admin
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
     env_file:
       - .env
     depends_on:
       db:
         condition: service_healthy
     volumes:
-      - ./support/keycloak-dev/realms:/realms
+      - ./keycloak_data:/opt/keycloak/data/h2
 
   app:
     build: .

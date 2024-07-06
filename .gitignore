@@ -223,3 +223,6 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
+
+keycloak_data/
+alternate_database.py
