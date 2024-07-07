@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 
 
 class BookingManager(CRUD[Booking, BookingCreate, BookingUpdate]):
-    def calculate_total_cost(self, event: "Event", quantity: int):
+    def calculate_total_cost(self, event: "Event", quantity: int) -> int:
 
         if event.available_tickets > event.surge_threshold:
             # No surge pricing if tickets are above the threshold
@@ -44,10 +44,7 @@ class BookingManager(CRUD[Booking, BookingCreate, BookingUpdate]):
             if event.available_tickets < booking_in.quantity:
                 raise InsufficientTickets
 
-            total_cost = self.calculate_total_cost(
-                event=event, quantity=booking_in.quantity
-            )
-            booking = Booking(**booking_in.model_dump(), total_cost=total_cost)
+            booking = Booking(**booking_in.model_dump())
 
             db.add(booking)
             event.available_tickets -= booking_in.quantity

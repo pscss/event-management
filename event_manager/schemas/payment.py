@@ -1,5 +1,4 @@
 from datetime import datetime
-from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict
 
@@ -9,10 +8,13 @@ from event_manager.models.payment import PaymentStatus
 class PaymentBase(BaseModel):
     booking_id: int
     payment_time: datetime
+    transaction_id: str
+    amount: float
+    status: PaymentStatus
 
 
 class PaymentCreate(PaymentBase):
-    pass
+    idempotency_key: str
 
 
 class PaymentUpdate(BaseModel):
@@ -21,8 +23,5 @@ class PaymentUpdate(BaseModel):
 
 class Payment(PaymentBase):
     id: int
-    status: PaymentStatus
-    transaction_id: UUID
-    amount: float
 
     model_config = ConfigDict(from_attributes=True)

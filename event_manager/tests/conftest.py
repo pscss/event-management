@@ -94,6 +94,6 @@ async def client(session: AsyncSession):
     async with AsyncClient(app=app, base_url="http://127.0.0.1:8080") as client:
         app.dependency_overrides[with_session] = session_override
         app.dependency_overrides[validate_and_parse_token] = lambda: {
-            "realm_access": {"roles": ["admin"]},
+            "resource_access": {settings.KEYCLOAK_CLIENT_ID: {"roles": ["admin"]}},
         }
         yield client

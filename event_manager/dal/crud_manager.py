@@ -1,10 +1,9 @@
-from typing import Generic, List, Optional, Type, TypeVar
+from typing import Any, Generic, List, Optional, Type, TypeVar
 
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
-from sqlalchemy import delete
+from sqlalchemy import and_, delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select
 
 ModelType = TypeVar("ModelType")
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
@@ -20,11 +19,17 @@ class CRUD(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         return result.scalars().first()
 
     async def create(self, db: AsyncSession, obj_in: CreateSchemaType) -> ModelType:
-        db_obj = self.model(**obj_in.model_dump(exclude_unset=True, exclude_none=True))
-        db.add(db_obj)
-        await db.commit()
-        await db.refresh(db_obj)
-        return db_obj
+        try:
+            db_obj = self.model(
+                **obj_in.model_dump(exclude_unset=True, exclude_none=True)
+            )
+            db.add(db_obj)
+            await db.commit()
+            await db.refresh(db_obj)
+            return db_obj
+        except Exception as e:
+            print(e)
+            raise e
 
     async def update(
         self, db: AsyncSession, db_obj: ModelType, obj_in: UpdateSchemaType
@@ -47,9 +52,20 @@ class CRUD(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         return obj
 
     async def get_all(
-        self, db: AsyncSession, skip: int = 0, limit: int = 10
+        self,
+        db: AsyncSession,
+        skip: int = 0,
+        limit: int = 10,
+        additional_where_clause: list[Any] | None = None,
     ) -> List[ModelType]:
-        result = await db.execute(
-            select(self.model).offset(skip).limit(limit).order_by(self.model.id)
-        )
+        query = select(self.model)
+
+        if additional_where_clause:
+            query = query.where(and_(*additional_where_clause))
+        if skip:
+            query = query.offset(skip)
+        if limit:
+            query = query.limit(limit)
+
+        result = await db.execute(query)
         return result.scalars().all()

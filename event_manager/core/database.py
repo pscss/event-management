@@ -42,7 +42,7 @@ def create_sessionmaker(engine: AsyncEngine) -> sessionmaker:
     return sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
 
 
-sessionmaker_instance = create_sessionmaker(get_engine())
+sessionmaker_instance: sessionmaker = create_sessionmaker(get_engine())
 
 
 async def with_session() -> AsyncGenerator[AsyncSession, None]:

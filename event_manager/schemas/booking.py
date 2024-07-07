@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import Optional
 
 from pydantic import BaseModel, ConfigDict
 
@@ -12,11 +11,8 @@ class BookingBase(BaseModel):
     total_cost: float
 
 
-class BookingCreate(BaseModel):
-    event_id: int
-    user_id: int
-    booking_time: datetime
-    quantity: int
+class BookingCreate(BookingBase):
+    pass
 
 
 class BookingUpdate(BaseModel):

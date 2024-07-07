@@ -1,7 +1,12 @@
+from typing import TYPE_CHECKING
+
 from sqlalchemy import VARCHAR, Column, Index, String, UniqueConstraint
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import Mapped, relationship
 
 from event_manager.models.base import Base
+
+if TYPE_CHECKING:
+    from event_manager.models.booking import Booking
 
 
 class User(Base):
@@ -11,9 +16,9 @@ class User(Base):
         UniqueConstraint("phone_number", name="phone_number_uix"),
         Index("name", "email"),
     )
-    name = Column(String, nullable=False)
-    email = Column(String, nullable=False, unique=True)
-    country_code = Column(String, nullable=False)
-    phone_number = Column(VARCHAR, nullable=False, index=True)
+    name: str = Column(String, nullable=False)
+    email: str = Column(String, nullable=False, unique=True)
+    country_code: str = Column(String, nullable=False)
+    phone_number: str = Column(VARCHAR, nullable=False, index=True)
 
-    bookings = relationship("Booking", back_populates="user")
+    bookings: Mapped["Booking"] = relationship("Booking", back_populates="user")
