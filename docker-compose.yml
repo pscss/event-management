@@ -2,33 +2,44 @@ services:
   db:
     image: postgres:16
     ports:
-      - "5433:5432"
+      - "${DB_HOST_PORT}:${DB_PORT}"
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=postgres # Set a default database
     env_file:
       - .env
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./postgres-init:/docker-entrypoint-initdb.d
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - event_manager
 
   keycloak:
     image: quay.io/keycloak/keycloak:${KEYCLOAK_VERSION}
     ports:
       - "8080:8080"
-      - "8443:8443"
     entrypoint: /opt/keycloak/bin/kc.sh start-dev
     environment:
-      - KEYCLOAK_ADMIN=admin
-      - KEYCLOAK_ADMIN_PASSWORD=admin
+      - KC_DB=postgres
+      - KC_DB_URL_HOST=${KC_DB_URL_HOST}
+      - KC_DB_USERNAME=${KC_DB_USERNAME}
+      - KC_DB_PASSWORD=${KC_DB_PASSWORD}
+      - KC_DB_SCHEMA=${KC_DB_SCHEMA}
+      - KEYCLOAK_ADMIN=${KEYCLOAK_ADMIN}
+      - KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD}
     env_file:
       - .env
     depends_on:
       db:
         condition: service_healthy
-    volumes:
-      - ./keycloak_data:/opt/keycloak/data/h2
+    networks:
+      - event_manager
 
   app:
     build: .
@@ -49,6 +60,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    networks:
+      - event_manager
 
   stripe:
     image: stripe/stripe-cli:latest
@@ -57,7 +70,13 @@ services:
       - ~/.config/stripe:/root/.config/stripe
     env_file:
       - .env
+    networks:
+      - event_manager
 
 volumes:
   postgres_data:
-  keycloak-data:
+  # keycloak-data:
+
+networks:
+  event_manager:
+    driver: bridge

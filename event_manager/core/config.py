@@ -8,6 +8,10 @@ class Settings(BaseSettings):
     POSTGRES_APPLICATION_NAME: str = "Event Manager"
     POSTGRES_POOL_SIZE: int = 10
     POSTGRES_POOL_MAX_OVERFLOW: int = 20
+    POSTGRES_USER: str
+    POSTGRES_PASSWORD: str
+    DB_HOST_PORT: int = 5433
+    DB_PORT: int = 5432
 
     GOOGLE_MAPS_API_KEY: str
 
@@ -20,6 +24,11 @@ class Settings(BaseSettings):
     KEYCLOAK_URL: str
     KEYCLOAK_REALM: str
     KEYCLOAK_CLIENT_ID: str
+    KC_DB: str
+    KC_DB_URL_HOST: str
+    KC_DB_PASSWORD: str
+    KC_DB_USERNAME: str
+    KC_DB_SCHEMA: str
 
     STRIPE_PUBLISHABLE_KEY: str
     STRIPE_API_KEY: str

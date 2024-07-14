@@ -75,7 +75,7 @@ def read_role_from_token(parsed_token: dict) -> str:
         .get(settings.KEYCLOAK_CLIENT_ID)
         .get("roles", [])
     )
-
+    logger.info(f"ROLES: {all_roles}")
     if len(all_roles) == 0:
         logger.critical("Keycloak user had no role supplied", parsed_token=parsed_token)
         raise TokenReadException("No role supplied on the user")
