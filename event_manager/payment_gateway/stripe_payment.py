@@ -6,8 +6,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from event_manager.core.config import settings
 from event_manager.dal.payment import payment_manager
-from event_manager.dal.payment_gateway.abstract_payment_gateway import PaymentGateway
 from event_manager.models.payment import PaymentStatus
+from event_manager.payment_gateway.abstract_payment_gateway import PaymentGateway
 
 logger = getLogger(__name__)
 stripe.api_key = settings.STRIPE_API_KEY

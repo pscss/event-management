@@ -9,11 +9,11 @@ from event_manager.core.database import with_session
 from event_manager.dal.booking import booking_manager
 from event_manager.dal.event import event_manager
 from event_manager.dal.payment import payment_manager
-from event_manager.dal.payment_gateway import get_idempotency_key, get_payment_gateway
-from event_manager.dal.payment_gateway.abstract_payment_gateway import PaymentGateway
 from event_manager.dal.user import user_manager
 from event_manager.errors.all_errors import ResourceNotFound
 from event_manager.models.payment import PaymentStatus
+from event_manager.payment_gateway import get_idempotency_key, get_payment_gateway
+from event_manager.payment_gateway.abstract_payment_gateway import PaymentGateway
 from event_manager.schemas.booking import BookingCreate
 from event_manager.schemas.payment import Payment, PaymentCreate
 

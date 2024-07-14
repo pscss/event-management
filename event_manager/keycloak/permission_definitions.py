@@ -9,6 +9,14 @@ class Permission(enum.Enum):
     DO_PAYMENT = "DO_PAYMENT"
     CREATE_EVENT = "CREATE_EVENT"
     DELETE_EVENT = "DELETE_EVENT"
+    MANAGE_USERS = "MANAGE_USERS"
+
+
+@enum.unique
+class Roles(enum.Enum):
+    ADMIN = "ADMIN"
+    SUPER_ADMIN = "SUPER_ADMIN"
+    USER = "USER"
 
 
 permissions_user = [
@@ -22,10 +30,14 @@ permissions_admin = permissions_user + [
     Permission.DELETE_EVENT,
 ]
 
+permissions_super_admin = (
+    permissions_user + permissions_admin + [Permission.MANAGE_USERS]
+)
 
 role_to_permissions_map = {
     "user": permissions_user,
     "admin": permissions_admin,
+    "super_admin": permissions_super_admin,
 }
 
 

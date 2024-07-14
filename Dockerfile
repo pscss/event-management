@@ -53,6 +53,14 @@ RUN apt-get update && \
 
 WORKDIR /app
 
+USER root
+# Install OpenSSL for certificate generation
+RUN apt-get update && apt-get install -y openssl
+# Generate self-signed certificate
+RUN openssl req -x509 -newkey rsa:4096 -keyout /app/key.pem -out /app/cert.pem -days 365 -nodes -subj "/CN=localhost"
+# Ensure the certificate files have the correct permissions
+RUN chmod 644 /app/cert.pem /app/key.pem
+
 RUN useradd -m worker \
     && chown -R worker:worker /app
 
@@ -64,9 +72,10 @@ ENV PYTHONPATH=/app \
 
 COPY --from=build /usr/local/lib/python3.10/site-packages /usr/local/lib/python3.10/site-packages
 COPY --from=build /app /app
-# COPY --from=build /etc/passwd /etc/passwd
+
+RUN ls -al /app
 
 EXPOSE 8000
 
 # Run migrations and start the application
-CMD ["bash", "-c", "python -m alembic upgrade head && python -m uvicorn event_manager.main:app --host 0.0.0.0 --port 8001"]
+CMD ["bash", "-c", "python -m alembic upgrade head && python -m uvicorn event_manager.main:app --host 0.0.0.0 --port 8001 --ssl-certfile /app/cert.pem --ssl-keyfile /app/key.pem || tail -f /dev/null"]

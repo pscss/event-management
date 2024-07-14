@@ -24,6 +24,8 @@ class Settings(BaseSettings):
     KEYCLOAK_URL: str
     KEYCLOAK_REALM: str
     KEYCLOAK_CLIENT_ID: str
+    KEYCLOAK_CLIENT_SECRET: str
+    # Keycloak DB
     KC_DB: str
     KC_DB_URL_HOST: str
     KC_DB_PASSWORD: str
@@ -33,6 +35,9 @@ class Settings(BaseSettings):
     STRIPE_PUBLISHABLE_KEY: str
     STRIPE_API_KEY: str
     STRIPE_WEBHOOK_SECRET: str
+
+    SSL_KEY_FILE: str
+    SSL_CERT_FILE: str
 
     model_config = ConfigDict(case_sensitive=True, env_file=".env")
 

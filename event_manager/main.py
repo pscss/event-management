@@ -25,6 +25,8 @@ app = FastAPI(
     openapi_url="/openapi.json",
     docs_url="/docs",
     redoc_url="/redoc",
+    ssl_keyfile=settings.SSL_KEY_FILE,
+    ssl_certfile=settings.SSL_CERT_FILE,
 )
 
 app.add_middleware(

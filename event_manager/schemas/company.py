@@ -2,16 +2,14 @@ from typing import Optional
 
 from pydantic import BaseModel, ConfigDict, EmailStr, field_validator
 
-from event_manager.keycloak.permission_definitions import Roles
 
-
-class UserBase(BaseModel):
+class CompanyBase(BaseModel):
     name: str
+    address: str
     email: EmailStr
     country_code: str
     phone_number: str
-    username: str
-    role: Optional[Roles] = Roles.USER
+    registration_number: str
 
     @field_validator("phone_number", mode="before")
     def check_valid_phone_number(cls, v: str):
@@ -23,21 +21,19 @@ class UserBase(BaseModel):
             return v
 
 
-class UserCreate(UserBase):
-    keycloak_id: Optional[str] = None
-    company_id: Optional[int] = None
+class CompanyCreate(CompanyBase):
+    pass
 
 
-class UserUpdate(UserBase):
+class CompanyUpdate(CompanyBase):
     name: Optional[str] = None
+    address: Optional[str] = None
     email: Optional[str] = None
     country_code: Optional[str] = None
     phone_number: Optional[str] = None
-    username: Optional[str] = None
 
 
-class User(UserBase):
+class Company(CompanyBase):
     id: int
-    keycloak_id: str
 
     model_config = ConfigDict(from_attributes=True)

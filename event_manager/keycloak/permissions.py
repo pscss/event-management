@@ -38,3 +38,8 @@ class CanDoPayment(SimplePermissionClass):
 class CanViewEvent(SimplePermissionClass):
     message = "User is not authorized to view Events"
     allowed_permission = Permission.DELETE_EVENT
+
+
+class CanManageUser(SimplePermissionClass):
+    message = "User is not authorized to C/U/D users"
+    allowed_permission = Permission.MANAGE_USERS

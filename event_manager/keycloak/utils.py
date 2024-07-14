@@ -61,7 +61,7 @@ async def validate_and_parse_token(
 
 def reorder_roles(roles: list[str]):
     # Define the priority order
-    priority = {"admin": 1, "user": 2}
+    priority = {"super_admin": 1, "admin": 2, "user": 3}
 
     # Sort roles based on the priority; roles not in priority will retain their order
     sorted_roles = sorted(roles, key=lambda role: priority.get(role, float("inf")))

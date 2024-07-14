@@ -2,7 +2,8 @@ import enum
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Column, DateTime, Enum, Float, ForeignKey, Index, Integer, String
+from sqlalchemy import Column, DateTime, Float, ForeignKey, Index, Integer, String
+from sqlalchemy.dialects.postgresql import ENUM
 from sqlalchemy.orm import Mapped, relationship
 from sqlalchemy.sql import func
 
@@ -24,7 +25,7 @@ class Payment(Base):
 
     booking_id: int = Column(Integer, ForeignKey("bookings.id"), nullable=False)
     amount: float = Column(Float, nullable=False)
-    status: PaymentStatus = Column(Enum(PaymentStatus), nullable=False)
+    status: PaymentStatus = Column(ENUM(PaymentStatus), nullable=False)
     transaction_id: str = Column(String, nullable=False, unique=True)
     payment_time: datetime = Column(
         DateTime(timezone=True), server_default=func.now(), nullable=False

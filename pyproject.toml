@@ -25,6 +25,7 @@ psycopg2-binary = "^2.9.9"
 pyjwt = "^2.8.0"
 cryptography = "^42.0.8"
 stripe = "^10.2.0"
+python-keycloak = "^4.2.1"
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.4.2"
