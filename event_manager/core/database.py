@@ -1,4 +1,5 @@
 import json
+from logging import getLogger
 from typing import Any, AsyncGenerator, Type
 
 from fastapi.encoders import jsonable_encoder
@@ -7,6 +8,8 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import Pool
 
 from event_manager.core.config import settings
+
+logger = getLogger(__name__)
 
 
 def get_server_settings() -> dict[str, str] | None:
@@ -47,4 +50,12 @@ sessionmaker_instance: sessionmaker = create_sessionmaker(get_engine())
 
 async def with_session() -> AsyncGenerator[AsyncSession, None]:
     async with sessionmaker_instance() as session:
-        yield session
+        try:
+            yield session
+            await session.commit()  # Commit after the yield if no exceptions
+        except Exception:
+            logger.info("ROLLING BACK")
+            await session.rollback()  # Rollback in case of exceptions
+            raise
+        finally:
+            await session.close()

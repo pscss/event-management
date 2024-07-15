@@ -70,11 +70,7 @@ def reorder_roles(roles: list[str]):
 
 
 def read_role_from_token(parsed_token: dict) -> str:
-    all_roles = (
-        parsed_token.get("resource_access", {})
-        .get(settings.KEYCLOAK_CLIENT_ID)
-        .get("roles", [])
-    )
+    all_roles = parsed_token.get("realm_access", {}).get("roles", [])
     logger.info(f"ROLES: {all_roles}")
     if len(all_roles) == 0:
         logger.critical("Keycloak user had no role supplied", parsed_token=parsed_token)

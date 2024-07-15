@@ -53,13 +53,10 @@ async def update_event(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.delete("/{event_id}", response_model=Event)
+@router.delete("/{event_id}", response_model=None)
 async def delete_event(event_id: int, db: AsyncSession = Depends(with_session)):
     try:
-        event = await event_manager.remove(db, event_id)
-        if not event:
-            raise HTTPException(status_code=404, detail="Event not found")
-        return event
+        await event_manager.remove(db, event_id)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

@@ -24,7 +24,7 @@ class CRUD(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
                 **obj_in.model_dump(exclude_unset=True, exclude_none=True)
             )
             db.add(db_obj)
-            await db.commit()
+            await db.flush()  # Use flush instead of commit to save changes but keep the transaction open
             await db.refresh(db_obj)
             return db_obj
         except Exception as e:
@@ -40,16 +40,13 @@ class CRUD(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
             if field in update_data:
                 setattr(db_obj, field, update_data[field])
         db.add(db_obj)
-        await db.commit()
+        await db.flush()  # Use flush instead of commit to save changes but keep the transaction open
         await db.refresh(db_obj)
         return db_obj
 
-    async def remove(self, db: AsyncSession, id: int) -> ModelType:
-        obj = await self.get(db, id)
-        if obj:
-            await db.execute(delete(self.model).where(self.model.id == id))
-            await db.commit()
-        return obj
+    async def remove(self, db: AsyncSession, id: int) -> None:
+        await db.execute(delete(self.model).where(self.model.id == id))
+        await db.flush()
 
     async def get_all(
         self,

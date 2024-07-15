@@ -25,6 +25,7 @@ class Settings(BaseSettings):
     KEYCLOAK_REALM: str
     KEYCLOAK_CLIENT_ID: str
     KEYCLOAK_CLIENT_SECRET: str
+    KEYCLOAK_USERNAME: str
     # Keycloak DB
     KC_DB: str
     KC_DB_URL_HOST: str

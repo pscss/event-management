@@ -34,6 +34,7 @@ class UserUpdate(UserBase):
     country_code: Optional[str] = None
     phone_number: Optional[str] = None
     username: Optional[str] = None
+    password: Optional[str] = None
 
 
 class User(UserBase):
