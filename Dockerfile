@@ -78,4 +78,4 @@ RUN ls -al /app
 EXPOSE 8000
 
 # Run migrations and start the application
-CMD ["bash", "-c", "python -m alembic upgrade head && python -m uvicorn event_manager.main:app --host 0.0.0.0 --port 8001 --ssl-certfile /app/cert.pem --ssl-keyfile /app/key.pem || tail -f /dev/null"]
+CMD ["bash", "-c", "python -m alembic upgrade head && python -m uvicorn --reload event_manager.main:app --host 0.0.0.0 --port 8001 --ssl-certfile /app/cert.pem --ssl-keyfile /app/key.pem || tail -f /dev/null"]

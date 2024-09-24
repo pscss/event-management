@@ -47,6 +47,8 @@ services:
     build: .
     ports:
       - "8001:8001"
+    volumes:
+      - ./event_manager:/app/event_manager
     environment:
       - DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/postgres
       - POSTGRES_APPLICATION_NAME=Event Manager
