@@ -69,5 +69,21 @@ class EventManager(CRUD[Event, EventCreate, EventUpdate]):
 
         return map_url
 
+    async def get_pessimistic_event(self, event_id: int, db: AsyncSession):
+        # Acquire a lock on the event row using with_for_update()
+        result = await db.execute(
+            select(Event).where(Event.id == event_id).with_for_update()
+        )
+        event = result.scalar_one_or_none()
+        return event
+
+    async def update_event_after_payment_failure(
+        self, event_id: int, db: AsyncSession, booking_quantity: int
+    ):
+        event = await self.get(db, event_id)
+        event.available_tickets += booking_quantity
+        db.add(event)
+        await db.commit()
+
 
 event_manager = EventManager(Event)

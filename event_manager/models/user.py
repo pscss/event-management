@@ -36,5 +36,9 @@ class User(Base):
     keycloak_id: str = Column(VARCHAR, nullable=False, index=True)
     username: str = Column(String, nullable=False, index=True)
 
-    company: Mapped["Company"] = relationship("Company", back_populates="users")
-    bookings: Mapped["Booking"] = relationship("Booking", back_populates="user")
+    company: Mapped["Company"] = relationship(
+        "Company", back_populates="users", lazy="selectin"
+    )
+    bookings: Mapped["Booking"] = relationship(
+        "Booking", back_populates="user", lazy="selectin"
+    )

@@ -18,7 +18,7 @@ class StripePaymentGateway(PaymentGateway):
         self,
         amount: float,
         idempotency_key: str,
-        currency: str | None = "INR",
+        currency: str | None = "USD",
         metadata: Dict[str, Any] = {},
     ) -> Dict[str, Any]:
         intent = stripe.PaymentIntent.create(

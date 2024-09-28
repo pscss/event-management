@@ -35,5 +35,13 @@ class Event(Base):
     base_price: float = Column(Float, nullable=False)
     surge_price: float = Column(Float, nullable=False, default=0)
     surge_threshold: float = Column(Float, nullable=False, default=0)
+    version: int = Column(Integer, nullable=False, default=0)
 
-    bookings: Mapped[list[Booking]] = relationship("Booking", back_populates="event")
+    __mapper_args__ = {
+        "version_id_col": version,  # SQLAlchemy uses this column for versioning
+        "version_id_generator": False,  # We'll manually increment the version
+    }
+
+    bookings: Mapped[list[Booking]] = relationship(
+        "Booking", back_populates="event", lazy="selectin"
+    )
