@@ -23,4 +23,6 @@ class Company(Base):
     phone_number: str = Column(VARCHAR, nullable=False, index=True)
     registration_number = Column(String, nullable=False, unique=True)
 
-    users: Mapped[list["User"]] = relationship("User", back_populates="company")
+    users: Mapped[list["User"]] = relationship(
+        "User", back_populates="company", lazy="selectin"
+    )

@@ -1,6 +1,8 @@
 from typing import TYPE_CHECKING
 
+from sqlalchemy.exc import OperationalError
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm.exc import StaleDataError
 
 from event_manager.dal.crud_manager import CRUD
 from event_manager.errors.all_errors import InsufficientTickets
@@ -50,6 +52,76 @@ class BookingManager(CRUD[Booking, BookingCreate, BookingUpdate]):
             event.available_tickets -= booking_in.quantity
             await db.commit()
             await db.refresh(booking)
+        except Exception as e:
+            await db.rollback()
+            raise e
+
+        return booking
+
+    async def create_booking_optimistic(
+        self, db: AsyncSession, booking_in: BookingCreate, event: "Event"
+    ) -> Booking:
+        try:
+            # Check ticket availability
+            if event.available_tickets < booking_in.quantity:
+                raise InsufficientTickets
+
+            # Decrease available tickets
+            event.available_tickets -= booking_in.quantity
+
+            # Manually increment the version to detect changes
+            event.version += 1
+
+            booking = Booking(**booking_in.model_dump())
+
+            db.add(booking)
+            db.add(event)
+
+            # Flush changes to the database
+            await db.flush()
+            await db.refresh(booking)
+
+        except StaleDataError:
+            await db.rollback()
+            raise RuntimeError("The event was modified by another transaction.")
+        except Exception as e:
+            await db.rollback()
+            raise e
+
+        return booking
+
+    async def create_booking_pessimistic(
+        self, db: AsyncSession, booking_in: BookingCreate, event: "Event"
+    ) -> Booking:
+        try:
+            # Check ticket availability
+            if event.available_tickets < booking_in.quantity:
+                raise InsufficientTickets
+
+            # Decrease available tickets
+            event.available_tickets -= booking_in.quantity
+
+            # # Calculate total cost
+            # total_cost = self.calculate_total_cost(event, booking_in.quantity)
+
+            # Create booking
+            booking = Booking(**booking_in.model_dump())
+
+            db.add(booking)
+            db.add(event)
+
+            # Flush changes to the database
+            await db.flush()
+            await db.refresh(booking)
+
+        except OperationalError as e:
+            # Handle deadlocks or lock timeouts
+            if "deadlock detected" in str(e):
+                await db.rollback()
+                raise RuntimeError("Booking conflict occurred. Please try again.")
+            else:
+                await db.rollback()
+                raise e
         except Exception as e:
             await db.rollback()
             raise e

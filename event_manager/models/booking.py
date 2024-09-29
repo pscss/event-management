@@ -23,6 +23,12 @@ class Booking(Base):
     quantity = Column(Integer, nullable=False)
     total_cost = Column(Float, nullable=False)
 
-    event: Mapped["Event"] = relationship("Event", back_populates="bookings")
-    user: Mapped["User"] = relationship("User", back_populates="bookings")
-    payments: Mapped[list[Payment]] = relationship("Payment", back_populates="booking")
+    event: Mapped["Event"] = relationship(
+        "Event", back_populates="bookings", lazy="selectin"
+    )
+    user: Mapped["User"] = relationship(
+        "User", back_populates="bookings", lazy="selectin"
+    )
+    payments: Mapped[list[Payment]] = relationship(
+        "Payment", back_populates="booking", lazy="selectin"
+    )

@@ -32,4 +32,6 @@ class Payment(Base):
     )
     idempotency_key: str = Column(String, nullable=False, unique=True)
 
-    booking: Mapped["Booking"] = relationship("Booking", back_populates="payments")
+    booking: Mapped["Booking"] = relationship(
+        "Booking", back_populates="payments", lazy="selectin"
+    )

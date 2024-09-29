@@ -42,24 +42,39 @@ async def get_all_payments(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/book_and_pay")
+@router.post("/book_and_pay", response_model=dict)
 async def book_and_pay(
     booking_in: BookingCreate,
+    optimistic: bool,
     db: AsyncSession = Depends(with_session),
     payment_gateway: PaymentGateway = Depends(get_payment_gateway),
     idempotency_key: str = Depends(get_idempotency_key),
 ):
 
     try:
-        event = await event_manager.get(db, booking_in.event_id)
-        if not event:
-            raise RuntimeError(f"Event with id: {booking_in.event_id} not found")
         user = await user_manager.get(db, booking_in.user_id)
         if not user:
             raise RuntimeError(f"User with id: {booking_in.user_id} not found")
+        if optimistic:
+            logger.info("OPtimistic Booking!!")
+            event = await event_manager.get(db, booking_in.event_id)
+            if not event:
+                raise RuntimeError(f"Event with id: {booking_in.event_id} not found")
+            db_booking = await booking_manager.create_booking_optimistic(
+                db, booking_in, event
+            )
+        else:
+            logger.info("Pessimistic Booking!!")
+            event = await event_manager.get_pessimistic_event(booking_in.event_id, db)
+            if not event:
+                raise RuntimeError(f"Event with id: {booking_in.event_id} not found")
+            db_booking = await booking_manager.create_booking_pessimistic(
+                db, booking_in, event
+            )
 
-        db_booking = await booking_manager.create_booking(db, booking_in, event)
-
+        logger.info(
+            f"COST {int(db_booking.total_cost)}",
+        )
         payment_intent = payment_gateway.create_payment_intent(
             amount=int(db_booking.total_cost),
             metadata={"booking_id": db_booking.id},
@@ -128,6 +143,11 @@ async def payment_failure(
             return {"status": "failure"}
 
         stripe.PaymentIntent.cancel(payment_intent_id)
+        await event_manager.update_event_after_payment_failure(
+            event_id=payment.booking.event_id,
+            db=db,
+            booking_quantity=payment.booking.quantity,
+        )
         return {"status": "failure"}
     except Exception as e:
         logger.exception(f"Error failing PaymentIntent: {e}")
