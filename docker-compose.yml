@@ -35,6 +35,8 @@ services:
       - KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD}
       - LOG_LEVEL=DEBUG
       - ROOT_LOG_LEVEL=DEBUG
+      - SSL_CERT_FILE=/app/data/cert.pem
+      - SSL_KEY_FILE=/app/data/key.pem
     env_file:
       - .env
     depends_on:

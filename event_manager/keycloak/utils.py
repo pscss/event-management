@@ -28,7 +28,7 @@ oauth_2_scheme = OAuth2AuthorizationCodeBearer(
 async def validate_and_parse_token(
     access_token: Annotated[str, Depends(oauth_2_scheme)]
 ):
-    logger.debug(f"ACCESS TOKEN!!! {access_token}")
+    logger.info(f"ACCESS TOKEN!!! {access_token}")
     jwks_client = PyJWKClient(JWKS_URI)
     try:
         signing_key = jwks_client.get_signing_key_from_jwt(access_token)
