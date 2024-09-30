@@ -33,7 +33,7 @@ class User(Base):
     phone_number: str = Column(VARCHAR, nullable=False, index=True)
     role: Roles = Column(ENUM(Roles), nullable=False)
     company_id: int = Column(Integer, ForeignKey("companies.id"), nullable=True)
-    keycloak_id: str = Column(VARCHAR, nullable=False, index=True)
+    keycloak_id: str = Column(VARCHAR, nullable=True, index=True)
     username: str = Column(String, nullable=False, index=True)
 
     company: Mapped["Company"] = relationship(

@@ -5,21 +5,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from event_manager.core.database import with_session
 from event_manager.dal.event import event_manager
-from event_manager.keycloak.permissions import CanCreateEvent
-from event_manager.keycloak.security import IsAuthorized
 from event_manager.schemas.event import Event, EventCreate, EventUpdate
-
-# Route Permissions
-can_create_event = IsAuthorized(CanCreateEvent)
 
 router = APIRouter()
 
 
-@router.post(
-    "/",
-    response_model=Event,
-    dependencies=[Depends(can_create_event)],
-)
+@router.post("/", response_model=Event)
 async def create_event(event_in: EventCreate, db: AsyncSession = Depends(with_session)):
     try:
         return await event_manager.create(db, event_in)

@@ -20,31 +20,31 @@ services:
     networks:
       - event_manager
 
-  keycloak:
-    image: quay.io/keycloak/keycloak:${KEYCLOAK_VERSION}
-    ports:
-      - "8080:8080"
-    entrypoint: /opt/keycloak/bin/kc.sh start-dev
-    environment:
-      - KC_DB=postgres
-      - KC_DB_URL_HOST=${KC_DB_URL_HOST}
-      - KC_DB_USERNAME=${KC_DB_USERNAME}
-      - KC_DB_PASSWORD=${KC_DB_PASSWORD}
-      - KC_DB_SCHEMA=${KC_DB_SCHEMA}
-      - KC_SSL_REQUIRED=none
-      - KEYCLOAK_ADMIN=${KEYCLOAK_ADMIN}
-      - KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD}
-      - LOG_LEVEL=DEBUG
-      - ROOT_LOG_LEVEL=DEBUG
-      # - SSL_CERT_FILE=/app/cert.pem
-      # - SSL_KEY_FILE=/app/key.pem
-    env_file:
-      - .env
-    depends_on:
-      db:
-        condition: service_healthy
-    networks:
-      - event_manager
+  # keycloak:
+  #   image: quay.io/keycloak/keycloak:${KEYCLOAK_VERSION}
+  #   ports:
+  #     - "8080:8080"
+  #   entrypoint: /opt/keycloak/bin/kc.sh start-dev
+  #   environment:
+  #     - KC_DB=postgres
+  #     - KC_DB_URL_HOST=${KC_DB_URL_HOST}
+  #     - KC_DB_USERNAME=${KC_DB_USERNAME}
+  #     - KC_DB_PASSWORD=${KC_DB_PASSWORD}
+  #     - KC_DB_SCHEMA=${KC_DB_SCHEMA}
+  #     - KC_SSL_REQUIRED=none
+  #     - KEYCLOAK_ADMIN=${KEYCLOAK_ADMIN}
+  #     - KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD}
+  #     - LOG_LEVEL=DEBUG
+  #     - ROOT_LOG_LEVEL=DEBUG
+  #     # - SSL_CERT_FILE=/app/cert.pem
+  #     # - SSL_KEY_FILE=/app/key.pem
+  #   env_file:
+  #     - .env
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #   networks:
+  #     - event_manager
 
   app:
     build: .

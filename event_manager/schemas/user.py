@@ -39,6 +39,6 @@ class UserUpdate(UserBase):
 
 class User(UserBase):
     id: int
-    keycloak_id: str
+    keycloak_id: Optional[str] = None
 
     model_config = ConfigDict(from_attributes=True)
